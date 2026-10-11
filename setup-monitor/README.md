@@ -21,17 +21,6 @@ Or from Paseo's plugin registry: `paseo plugin add stevecastaneda/setup-monitor`
 
 Turn on **Settings → Plugins → Enable plugins** on the daemon first.
 
-## Local development
-
-```bash
-cd setup-monitor
-npm install
-npm run typecheck
-npm test
-paseo plugin install "$PWD"
-paseo plugin reload setup-monitor
-```
-
 ## Updates
 
 Workspace and agent changes arrive through subscriptions rather than repeated

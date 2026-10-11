@@ -26,21 +26,6 @@ paseo plugin add npm:@stevecastaneda/paseo-time-since
 
 Or from Paseo's plugin registry: `paseo plugin add stevecastaneda/time-since`.
 
-From a local checkout:
-
-```bash
-npm install
-npm run typecheck
-paseo plugin install /absolute/path/to/time-since
-```
-
-After source changes:
-
-```bash
-npm run typecheck
-paseo plugin reload time-since
-```
-
 ## Updates
 
 Agent changes arrive through a subscription rather than repeated list requests.

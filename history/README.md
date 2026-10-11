@@ -32,20 +32,6 @@ paseo plugin add npm:@stevecastaneda/paseo-history
 
 Or from Paseo's plugin registry: `paseo plugin add stevecastaneda/history`.
 
-## Local install
-
-With plugins enabled in Paseo:
-
-```sh
-cd history
-npm install
-npm run typecheck
-npm test
-paseo plugin install "$PWD"
-```
-
-After edits, run the checks and `paseo plugin reload history`.
-
 ## Changelog
 
 ### 0.5.0
