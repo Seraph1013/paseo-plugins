@@ -63,7 +63,9 @@ export async function findPluginDirectory(): Promise<string> {
   const clis = [process.env.PASEO_BIN, "paseo", "/Applications/Paseo.app/Contents/Resources/bin/paseo"].filter((cli): cli is string => Boolean(cli));
   for (const cli of clis) {
     try {
-      const { stdout } = await promisify(execFile)(cli, ["plugin", "ls", PLUGIN_ID, "--json"]);
+      const { stdout } = await (process.platform === "win32" && cli === "paseo"
+        ? promisify(execFile)("cmd.exe", ["/d", "/c", "paseo plugin ls progress --json"])
+        : promisify(execFile)(cli, ["plugin", "ls", PLUGIN_ID, "--json"]));
       const plugin = (JSON.parse(stdout) as Array<{ id: string; path?: string }>).find((entry) => entry.id === PLUGIN_ID);
       if (plugin?.path) return plugin.path;
     } catch {
@@ -83,3 +85,4 @@ export async function handleInstallSkill() {
   await installSkill(defaultSkillPaths(), pluginDirectory);
   return skillStatus(defaultSkillPaths(), pluginDirectory);
 }
+

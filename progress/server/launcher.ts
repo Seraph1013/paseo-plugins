@@ -1,4 +1,5 @@
 import { chmod, mkdir, readFile, writeFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
 import { homedir } from "node:os";
 import { delimiter, dirname, join } from "node:path";
 
@@ -24,7 +25,9 @@ function pluginDirectory() {
   if (process.env.PASEO_PROGRESS_PLUGIN_DIR) return process.env.PASEO_PROGRESS_PLUGIN_DIR;
   const clis = [process.env.PASEO_BIN, "paseo", "/Applications/Paseo.app/Contents/Resources/bin/paseo"].filter(Boolean);
   for (const cli of clis) {
-    const result = spawnSync(cli, ["plugin", "ls", "${PLUGIN_ID}", "--json"], { encoding: "utf8" });
+    const result = process.platform === "win32" && cli === "paseo"
+      ? spawnSync("cmd.exe", ["/d", "/c", "paseo plugin ls ${PLUGIN_ID} --json"], { encoding: "utf8" })
+      : spawnSync(cli, ["plugin", "ls", "${PLUGIN_ID}", "--json"], { encoding: "utf8" });
     if (result.error || result.status !== 0) continue;
     try {
       const plugin = JSON.parse(result.stdout).find((entry) => entry.id === "${PLUGIN_ID}");
@@ -81,7 +84,10 @@ export async function launcherStatus(path = defaultLauncherPath(), pathEnv = pro
   return {
     path,
     state: await launcherState(path),
-    onPath: pathEnv.split(delimiter).some((entry) => entry.replace(/\/+$/, "") === dirname(path)),
+    onPath: pathEnv.split(delimiter).some((entry) =>
+      entry.replace(/\/+$/, "") === dirname(path) ||
+      (process.platform === "win32" && existsSync(join(entry, "paseo-progress.cmd"))),
+    ),
   };
 }
 
@@ -95,3 +101,4 @@ export async function handleInstallLauncher() {
   await installLauncher(path);
   return launcherStatus(path);
 }
+
